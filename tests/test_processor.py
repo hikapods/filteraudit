@@ -1,22 +1,20 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import pytest
-from processor import load_data, filter_by_field, filter_by_threshold, transform_fields
+from processor import load_data, save_output
 
-def test_filter_by_field():
-    data = [{"type": "A", "val": "1"}, {"type": "B", "val": "2"}]
-    assert filter_by_field(data, "type", "A") == [{"type": "A", "val": "1"}]
+def test_load_and_save_roundtrip(tmp_path):
+    csv_file = tmp_path / "input.csv"
+    csv_file.write_text("name,value\nalice,1\nbob,2\n")
+    out_file = tmp_path / "output.csv"
+    data = load_data(str(csv_file))
+    save_output(data, str(out_file))
+    result = load_data(str(out_file))
+    assert result == data
 
-def test_filter_by_threshold():
-    data = [{"score": "10"}, {"score": "3"}, {"score": "7"}]
-    result = filter_by_threshold(data, "score", 5)
-    assert len(result) == 2
-
-def test_transform_fields():
-    data = [{"old_name": "x"}]
-    result = transform_fields(data, {"old_name": "new_name"})
-    assert result == [{"new_name": "x"}]
-
-def test_filter_by_field_no_match():
-    data = [{"type": "A"}]
-    assert filter_by_field(data, "type", "Z") == []
+def test_load_data_returns_list(tmp_path):
+    csv_file = tmp_path / "input.csv"
+    csv_file.write_text("name,value\nalice,1\n")
+    result = load_data(str(csv_file))
+    assert isinstance(result, list)
+    assert len(result) == 1
