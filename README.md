@@ -22,3 +22,7 @@ pip install pytest
 ```bash
 pytest tests/
 ```
+
+## Supported formats
+
+CSV and TSV input files are supported. JSON output coming soon.
