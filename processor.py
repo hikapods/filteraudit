@@ -29,3 +29,4 @@ def save_output(data, path):
         writer = csv.DictWriter(f, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
+SUPPORTED_FORMATS = ['csv', 'tsv', 'json']
